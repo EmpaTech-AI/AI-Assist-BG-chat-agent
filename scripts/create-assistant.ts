@@ -4,6 +4,7 @@
     const fs = require("fs");
     const assistantFilePath = "./assistant/assistant.json";
     const { schedule_dental_visit_config } = require('../src/tools/schedule-dental-visit.ts');
+    const { capture_lead_config } = require('../src/tools/capture-lead.ts');
 
     const secretKey = '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';
     const openai = new OpenAI({
@@ -11,7 +12,7 @@
     });
         
     const assistantConfig = {
-        name: "Country helper",
+        name: "Demo Assistant 0.01",
         // This will be populated in the createNewAssistant call
         instructions: "",
         model: "gpt-4-1106-preview",
@@ -20,6 +21,7 @@
             { "type": "retrieval" },
             { "type": "code_interpreter" },
             schedule_dental_visit_config,
+            capture_lead_config,
         ],
         // This will be populated in the createNewAssistant call
         file_ids: []

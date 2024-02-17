@@ -5,6 +5,7 @@
     const assistantFilePath = "./assistant/assistant.json";
     const ASSISTANT_CONFIGURATION = require('../assistant/assistant.json');
     const { schedule_dental_visit_config } = require('../src/tools/schedule-dental-visit.ts');
+    const { capture_lead_config } = require('../src/tools/capture-lead.ts');
 
     const secretKey = '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';
     const openai = new OpenAI({
@@ -22,6 +23,7 @@
             { "type": "retrieval" },
             { "type": "code_interpreter" },
             schedule_dental_visit_config,
+            capture_lead_config
         ],
         // This will be populated in the updateAssistant call
         file_ids: []

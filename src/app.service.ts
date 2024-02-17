@@ -6,6 +6,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateThreadDto } from './dto/create-thread.dto';
 import { SECONDS, USER_ROLES } from './interfaces/enums';
 const { schedule_dental_visit } = require('./tools/schedule-dental-visit');
+const { capture_lead } = require('./tools/capture-lead');
 
 @Injectable()
 export class AppService {
@@ -88,6 +89,7 @@ export class AppService {
 
           const SUPPORTED_ACTIONS = {
             'schedule_dental_visit': schedule_dental_visit,
+            'capture_lead': capture_lead,
           };
 
           for (const toolCall of toolCalls) {
@@ -107,6 +109,12 @@ export class AppService {
               });
             } else {
               console.log( `This question requires us to call a function: ${functionName} which is not supported !` );
+              // This should not happen, we should always have the functions which are mentioned in the instructions of the assistant
+              // Still generate the output for the tool, since the run expects it
+              toolOutputs.push({
+                tool_call_id: toolCall.id,
+                output: 'Error: This tool is not supported',
+              });
             }
           }
           // Submit tool outputs

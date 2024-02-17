@@ -42,7 +42,7 @@ assistant_instructions = """
 
     1. General Dental Information:
        - Ask questions about dental hygiene, common dental issues, and preventive care to provide tailored advice and information.
-       - Utilize the 'dental_info' tool to offer detailed explanations and tips on maintaining oral health.
+       - Utilize the knowledge base document to offer detailed explanations and tips on maintaining oral health.
 
     2. Procedure Inquiries:
        - If you're curious about a specific dental procedure or treatment, feel free to ask.
