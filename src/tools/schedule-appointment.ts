@@ -3,8 +3,8 @@
   const config = {
     "type": "function",
     "function": {
-      "name": "schedule_dental_visit",
-      "description": "Schedule a dental visit for a patient",
+      "name": "schedule_appointment",
+      "description": "Schedule an appointment",
       "parameters": {
         "type": "object",
         "properties": {
@@ -18,7 +18,7 @@
           },
           "question": {
             "type": "string",
-            "description": "Dental question of the user"
+            "description": "Appointment question of the user"
           },
           "date_time": {
             "type":
@@ -33,12 +33,12 @@
   }
 
   /**
-      Schedule a dental visit and send the data to a webhook.
+      Schedule a appointment and send the data to a webhook.
       :param arguments: dict, Contains information for scheduling a property viewing.
       Expected keys: full_name, email, question, date_time.
       :return: dict or str, Response from the webhook or error message.
   */
-  async function schedule_dental_visit(params) {
+  async function schedule_appointment(params) {
     // Environment variable for webhook URL
     const MAKE_WEBHOOK_VISIT_SCHEDULE = process.env['MAKE_WEBHOOK_VISIT_SCHEDULE'];
 
@@ -73,10 +73,10 @@
       const response = await axios.post(MAKE_WEBHOOK_VISIT_SCHEDULE, data);
       // @ts-ignore
       if ([200, 201].includes(response.status)) {
-        return "Dental visit scheduled successfully."
+        return "Appointment visit scheduled successfully."
       } else {
         // @ts-ignore
-        const error = `Error scheduling dental visit: ${response.text}`
+        const error = `Error scheduling appointment visit: ${response.text}`
         return error;
       }
     } catch (e) {
@@ -84,6 +84,6 @@
     }
   }
 
-  exports.schedule_dental_visit_config = config;
-  exports.schedule_dental_visit = schedule_dental_visit;
+  exports.schedule_appointment_config = config;
+  exports.schedule_appointment = schedule_appointment;
 })();

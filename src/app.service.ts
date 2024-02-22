@@ -5,8 +5,10 @@ import { HttpService } from '@nestjs/axios';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateThreadDto } from './dto/create-thread.dto';
 import { SECONDS, USER_ROLES } from './interfaces/enums';
-const { schedule_dental_visit } = require('./tools/schedule-dental-visit');
+const { schedule_appointment } = require('./tools/schedule-appointment');
 const { capture_lead } = require('./tools/capture-lead');
+const { search_real_estate_listings } = require('./tools/search-real-estate-listings');
+require('dotenv').config();
 
 @Injectable()
 export class AppService {
@@ -88,8 +90,9 @@ export class AppService {
         const toolOutputs = [];
 
         const SUPPORTED_ACTIONS = {
-          'schedule_dental_visit': schedule_dental_visit,
+          'schedule_appointment': schedule_appointment,
           'capture_lead': capture_lead,
+          'search_real_estate_listings': search_real_estate_listings,
         };
 
         for (const toolCall of toolCalls) {

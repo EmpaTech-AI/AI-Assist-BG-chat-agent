@@ -4,14 +4,15 @@
     const fs = require("fs");
     const assistantFilePath = "./assistant/assistant.json";
     const ASSISTANT_CONFIGURATION = require('../assistant/assistant.json');
-    const { schedule_dental_visit_config } = require('../src/tools/schedule-dental-visit.ts');
+    const { schedule_appointment_config } = require('../src/tools/schedule-appointment.ts');
     const { capture_lead_config } = require('../src/tools/capture-lead.ts');
+    const { search_real_estate_listings_config } = require('../src/tools/search-real-estate-listings.ts');
+    require('dotenv').config();
 
-    const secretKey = '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';
+    const OPENAI_API_KEY = process.env['OPENAI_API_KEY'];
     const openai = new OpenAI({
-    apiKey: secretKey,
+    apiKey: OPENAI_API_KEY,
     });
-
     
     const assistantConfig = {
         name: "",
@@ -22,8 +23,9 @@
         tools: [
             { "type": "retrieval" },
             { "type": "code_interpreter" },
-            schedule_dental_visit_config,
-            capture_lead_config
+            schedule_appointment_config,
+            capture_lead_config,
+            search_real_estate_listings_config
         ],
         // This will be populated in the updateAssistant call
         file_ids: []

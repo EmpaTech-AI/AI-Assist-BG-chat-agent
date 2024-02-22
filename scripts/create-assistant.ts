@@ -3,16 +3,19 @@
     const fsPromises = require("fs").promises;
     const fs = require("fs");
     const assistantFilePath = "./assistant/assistant.json";
-    const { schedule_dental_visit_config } = require('../src/tools/schedule-dental-visit.ts');
+    const { schedule_appointment_config } = require('../src/tools/schedule-appointment.ts');
     const { capture_lead_config } = require('../src/tools/capture-lead.ts');
+    const { search_real_estate_listings_config } = require('../src/tools/search-real-estate-listings');
+    require('dotenv').config();
 
-    const secretKey = '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';
+    const OPENAI_API_KEY = process.env['OPENAI_API_KEY'];
+
     const openai = new OpenAI({
-    apiKey: secretKey,
+    apiKey: OPENAI_API_KEY,
     });
         
     const assistantConfig = {
-        name: "Demo Assistant 0.01",
+        name: "Demo Assistant dev",
         // This will be populated in the createNewAssistant call
         instructions: "",
         model: "gpt-4-1106-preview",
@@ -20,8 +23,9 @@
         tools: [
             { "type": "retrieval" },
             { "type": "code_interpreter" },
-            schedule_dental_visit_config,
+            schedule_appointment_config,
             capture_lead_config,
+            search_real_estate_listings_config,
         ],
         // This will be populated in the createNewAssistant call
         file_ids: []
