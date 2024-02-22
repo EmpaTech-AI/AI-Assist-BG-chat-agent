@@ -110,11 +110,12 @@
         }
 
         if (home_size) {
-            data["Home size"] = home_size
-            // Calculate what is 30% of the home_size 
-            const percentage_decrease = 30/100 * home_size;
-            const min_home_size = home_size - percentage_decrease
-            const query = `AND({Home size} >= ${min_home_size}, {Home size} <= ${price})`;
+            data["Home size"] = home_size;
+            // Calculate what is 50% of the home_size 
+            const percentage_buffer = 50/100 * home_size;
+            const min_home_size = home_size - percentage_buffer;
+            const max_home_size = home_size + percentage_buffer;
+            const query = `AND({Home size} >= ${min_home_size}, {Home size} <= ${max_home_size})`;
             queryParams.push(query);
         }
 
