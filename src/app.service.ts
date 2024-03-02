@@ -8,6 +8,7 @@ import { SECONDS, USER_ROLES } from './interfaces/enums';
 const { schedule_appointment } = require('./tools/schedule-appointment');
 const { capture_lead } = require('./tools/capture-lead');
 const { search_real_estate_listings } = require('./tools/search-real-estate-listings');
+const { database_search } = require('./tools/database-search');
 require('dotenv').config();
 
 @Injectable()
@@ -76,9 +77,13 @@ export class AppService {
       runId
     );
 
+    console.log(`Run ${runId} status: ${runStatus.status} `);
+
     // Polling mechanism to see if runStatus is completed
     while (runStatus.status !== 'completed') {
       await new Promise((resolve) => setTimeout(resolve, SECONDS.FIVE));
+
+      console.log(`Run ${runId} status: ${runStatus.status} `);
 
       runStatus = await this.openai.beta.threads.runs.retrieve(
         thread_id,
@@ -92,7 +97,8 @@ export class AppService {
         const SUPPORTED_ACTIONS = {
           'schedule_appointment': schedule_appointment,
           'capture_lead': capture_lead,
-          'search_real_estate_listings': search_real_estate_listings,
+          // 'search_real_estate_listings': search_real_estate_listings,
+          'database_search': database_search,
         };
 
         for (const toolCall of toolCalls) {
@@ -137,6 +143,8 @@ export class AppService {
         break; // Exit the loop if the status indicates a failure or cancellation
       }
     }
+
+    console.log(`Run ${runId} status: ${runStatus.status} `);
 
     return runStatus
   }

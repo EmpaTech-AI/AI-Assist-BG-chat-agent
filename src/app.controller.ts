@@ -14,6 +14,7 @@ export class AppController {
 
   @Post('chat')
   async chat(@Body() messageDto: CreateMessageDto): Promise<any> {
+    console.log('Message returned to user', messageDto);
     return this.appService.chat(messageDto);
   }
 }
