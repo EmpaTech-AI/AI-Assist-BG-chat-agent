@@ -3,7 +3,7 @@
   const config = {
     "type": "function",
     "function": {
-      "name": "search_real_estate_listings",
+      "name": "fetch_properties_sofia",
       "description":
         "Search for real estate listings based on various parameters.",
       "parameters": {
@@ -48,7 +48,7 @@
             "description":
               "Price point. Adjusts for a range around the specified value."
           },
-          "home_size": {
+          "size": {
             "type":
               "integer",
             "description":
@@ -65,10 +65,10 @@
       :param arguments: dict, Contains the search parameters.
       :return: dict or str, Response from the API or error message.
   */
-  async function search_real_estate_listings(params) {
+  async function fetch_properties_sofia(params) {
     // Environment variables
-    const SEARCH_LISTINGS_URL = process.env['SEARCH_LISTINGS_URL'] + 'Sofia';
-    const AIRTABLE_API_KEY = process.env['AIRTABLE_API_KEY'];
+    const SEARCH_LISTINGS_URL = process.env['SEARCH_LISTINGS_URL'] + 'Sofia?filterByFormula=AND(';
+    const AIRTABLE_API_KEY = process.env['PROPERTIES_AIRTABLE_API_KEY'];
 
     if (!SEARCH_LISTINGS_URL) {
       return 'missing SEARCH_LISTINGS_URL environment variable'
@@ -80,13 +80,12 @@
     }
 
     // Extracting information from arguments
-    const { rooms, price, status, home_size, location } = params;
+    const { rooms, price, status, size, location } = params;
 
     // filterByFormula=AND(FIND('кв. Лозенец', {Location}) > 0, AND({Beds} = '2'),  AND({Home Size} = '150 кв.м.'), AND({Price} >= 150000, {Price} <= 200000))
     // Preparing query parameters
     const data = {};
     let queryParams = [];
-
 
     if (location) {
       data["Location"] = location;
@@ -115,19 +114,20 @@
       queryParams.push(query);
     }
 
-    if (home_size) {
-      data["Home size"] = home_size;
-      // Calculate what is 20% of the home_size 
-      const percentage_buffer = 20 / 100 * home_size;
-      const min_home_size = home_size - percentage_buffer;
-      const max_home_size = home_size + percentage_buffer;
-      const query = `AND({Home size} >= ${min_home_size}, {Home size} <= ${max_home_size})`;
+    if (size) {
+      data["Size"] = size;
+      // Calculate what is 20% of the size
+      const percentage_buffer = 20 / 100 * size;
+      const min_home_size = size - percentage_buffer;
+      const max_home_size = size + percentage_buffer;
+      const query = `AND({Size} >= ${min_home_size}, {Size} <= ${max_home_size})`;
       queryParams.push(query);
     }
 
     // Concat the query params and close the bracket
     const query = queryParams.join() + ')'
     const URL_WITH_PARAMS = SEARCH_LISTINGS_URL + encodeURIComponent(query);
+    console.log(URL_WITH_PARAMS + '--- query -> ' + query)
 
     // Send data to retrieve the properties
     try {
@@ -135,6 +135,7 @@
         {
           headers: headers
         });
+      console.log(JSON.stringify(response?.data));
       return JSON.stringify(response?.data);
     } catch (e) {
       console.log(`Failed to get properties: ${e}`);
@@ -142,6 +143,6 @@
     }
   }
 
-  exports.search_real_estate_listings_config = config;
-  exports.search_real_estate_listings = search_real_estate_listings;
+  exports.fetch_properties_sofia_config = config;
+  exports.fetch_properties_sofia = fetch_properties_sofia;
 })();

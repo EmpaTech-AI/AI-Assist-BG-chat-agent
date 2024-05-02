@@ -6,9 +6,9 @@
     const ASSISTANT_CONFIGURATION = require('../assistant/assistant.json');
     const { schedule_appointment_config } = require('../src/tools/schedule-appointment.ts');
     const { capture_lead_config } = require('../src/tools/capture-lead.ts');
-    const { search_real_estate_listings_config } = require('../src/tools/search-real-estate-listings.ts');
-    const { database_search_config } = require('../src/tools/database-search.ts');
-    require('dotenv').config();
+    const { fetch_properties_sofia_config } = require('../src/tools/fetch-properties-sofia.ts');
+  
+require('dotenv').config();
 
     const OPENAI_API_KEY = process.env['OPENAI_API_KEY'];
     const openai = new OpenAI({
@@ -26,8 +26,7 @@
             { "type": "code_interpreter" },
             schedule_appointment_config,
             capture_lead_config,
-            search_real_estate_listings_config,
-            database_search_config
+            fetch_properties_sofia_config,
         ],
         // This will be populated in the updateAssistant call
         file_ids: []

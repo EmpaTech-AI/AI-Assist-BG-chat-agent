@@ -7,8 +7,8 @@ import { CreateThreadDto } from './dto/create-thread.dto';
 import { SECONDS, USER_ROLES } from './interfaces/enums';
 const { schedule_appointment } = require('./tools/schedule-appointment');
 const { capture_lead } = require('./tools/capture-lead');
-const { search_real_estate_listings } = require('./tools/search-real-estate-listings');
-const { database_search } = require('./tools/database-search');
+const { fetch_properties_sofia } = require('./tools/fetch-properties-sofia');
+
 require('dotenv').config();
 
 @Injectable()
@@ -97,8 +97,7 @@ export class AppService {
         const SUPPORTED_ACTIONS = {
           'schedule_appointment': schedule_appointment,
           'capture_lead': capture_lead,
-          // 'search_real_estate_listings': search_real_estate_listings,
-          'database_search': database_search,
+          'fetch_properties_sofia': fetch_properties_sofia,
         };
 
         for (const toolCall of toolCalls) {

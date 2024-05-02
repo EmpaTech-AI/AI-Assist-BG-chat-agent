@@ -5,8 +5,7 @@
     const assistantFilePath = "./assistant/assistant.json";
     const { schedule_appointment_config } = require('../src/tools/schedule-appointment.ts');
     const { capture_lead_config } = require('../src/tools/capture-lead.ts');
-    const { search_real_estate_listings_config } = require('../src/tools/search-real-estate-listings');
-    const { database_search_config } = require('../src/tools/database-search.ts');
+    const { search_real_estate_listings_config } = require('../src/tools/search-real-estate-listings.ts');
     require('dotenv').config();
 
     const OPENAI_API_KEY = process.env['OPENAI_API_KEY'];
@@ -16,7 +15,7 @@
     });
         
     const assistantConfig = {
-        name: "Demo Assistant dev",
+        name: "Real Estate Assistant",
         // This will be populated in the createNewAssistant call
         instructions: "",
         model: "gpt-4-1106-preview",
@@ -27,7 +26,6 @@
             schedule_appointment_config,
             capture_lead_config,
             search_real_estate_listings_config,
-            database_search_config,
         ],
         // This will be populated in the createNewAssistant call
         file_ids: []

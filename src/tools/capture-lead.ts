@@ -62,8 +62,8 @@
     }
 
     // Environment variable for Airtable API URL
-    const AIRTABLE_BASE_ID = process.env['AIRTABLE_BASE_ID'];
-    const AIRTABLE_API_KEY = process.env['AIRTABLE_API_KEY'];
+    const AIRTABLE_BASE_ID = process.env['LEADS_AIRTABLE_BASE_ID'];
+    const AIRTABLE_API_KEY = process.env['LEADS_AIRTABLE_API_KEY'];
     const URL = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Leads`;
 
     // headers
