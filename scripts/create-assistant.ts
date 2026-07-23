@@ -5,7 +5,7 @@
     const assistantFilePath = "./assistant/assistant.json";
     const { schedule_appointment_config } = require('../src/tools/schedule-appointment.ts');
     const { capture_lead_config } = require('../src/tools/capture-lead.ts');
-    const { search_real_estate_listings_config } = require('../src/tools/search-real-estate-listings.ts');
+
     require('dotenv').config();
 
     const OPENAI_API_KEY = process.env['OPENAI_API_KEY'];
@@ -13,22 +13,25 @@
     const openai = new OpenAI({
     apiKey: OPENAI_API_KEY,
     });
-        
+
     const assistantConfig = {
-        name: "Real Estate Assistant",
-        // This will be populated in the createNewAssistant call
+        name: "AI Assist BG Assistant NEW - GPT 4o",
         instructions: "",
-        model: "gpt-4-1106-preview",
-        // dynamically import the tools here
+        model: "gpt-4o",
         tools: [
-            { "type": "retrieval" },
             { "type": "code_interpreter" },
+            { "type": "file_search" },
             schedule_appointment_config,
             capture_lead_config,
-            search_real_estate_listings_config,
         ],
-        // This will be populated in the createNewAssistant call
-        file_ids: []
+        tool_resources: {
+            "file_search": {
+                "vector_store_ids": []
+            },
+            "code_interpreter": {
+                "file_ids": []
+            }
+        }
     };
 
     async function createNewAssistant() {
@@ -39,11 +42,11 @@
         const filteredFiles = files.filter(name => name !== '.DS_Store');
 
         const uploadPromises = filteredFiles.map(async (fileName) => {
-            const filePah = `./resources/${fileName}`;
+            const filePath = `./resources/${fileName}`;
             // Upload the file
             try {
                 const file = await openai.files.create({
-                    file: fs.createReadStream(filePah),
+                    file: fs.createReadStream(filePath),
                     purpose: "assistants",
                 });
                 return file.id;
@@ -53,25 +56,18 @@
         });
 
         const fileIds = await Promise.all(uploadPromises);
-        const filteredFileIds = fileIds.filter(id => id); // take only truthty values
+        const filteredFileIds = fileIds.filter(id => id);
 
-        // Gather the assistant instructions
-        const instructionsFilePath =  './instructions/instructions.txt';
-        const assistantInstructions = await fsPromises.readFile(
-            instructionsFilePath,
-            "utf8"
-        );
+        const instructionsFilePath = './instructions/instructions.txt';
+        const assistantInstructions = await fsPromises.readFile(instructionsFilePath, "utf8");
 
-        // Update the assistant config with the newly obtained data fileds
-        assistantConfig.file_ids = filteredFileIds;
+        assistantConfig.tool_resources.code_interpreter.file_ids = filteredFileIds;
         assistantConfig.instructions = assistantInstructions;
 
-        // // @ts-ignore
         const assistant = await openai.beta.assistants.create(assistantConfig);
         const assistantDetails = { assistantId: assistant.id, ...assistantConfig };
         console.log('new assistant created');
 
-        // Save the assistant details to assistant.json
         await fsPromises.writeFile(
         assistantFilePath,
         JSON.stringify(assistantDetails, null, 2)

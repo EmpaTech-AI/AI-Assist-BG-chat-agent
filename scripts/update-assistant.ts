@@ -6,30 +6,34 @@
     const ASSISTANT_CONFIGURATION = require('../assistant/assistant.json');
     const { schedule_appointment_config } = require('../src/tools/schedule-appointment.ts');
     const { capture_lead_config } = require('../src/tools/capture-lead.ts');
-    const { fetch_properties_sofia_config } = require('../src/tools/fetch-properties-sofia.ts');
-  
+    const { fetch_datetime_config } = require('../src/tools/fetch-datetime.ts');
+    
 require('dotenv').config();
 
     const OPENAI_API_KEY = process.env['OPENAI_API_KEY'];
     const openai = new OpenAI({
     apiKey: OPENAI_API_KEY,
     });
-    
+
     const assistantConfig = {
         name: "",
-        // This will be populated in the updateAssistant call
         instructions: "",
         model: "",
-        // dynamically import the tools here
         tools: [
-            { "type": "retrieval" },
             { "type": "code_interpreter" },
+            { "type": "file_search" },
             schedule_appointment_config,
             capture_lead_config,
-            fetch_properties_sofia_config,
+            fetch_datetime_config,
         ],
-        // This will be populated in the updateAssistant call
-        file_ids: []
+        tool_resources: {
+            "file_search": {
+                "vector_store_ids": []
+            },
+            "code_interpreter": {
+                "file_ids": []
+            }
+        }
     };
 
     async function updateAssistant() {
@@ -47,11 +51,11 @@ require('dotenv').config();
         const filteredFiles = files.filter(name => name !== '.DS_Store');
 
         const uploadPromises = filteredFiles.map(async (fileName) => {
-            const filePah = `./resources/${fileName}`;
+            const filePath = `./resources/${fileName}`;
             // Upload the file
             try {
                 const file = await openai.files.create({
-                    file: fs.createReadStream(filePah),
+                    file: fs.createReadStream(filePath),
                     purpose: "assistants",
                 });
                 return file.id;
@@ -78,7 +82,7 @@ require('dotenv').config();
         // Put the newly provided model
         assistantConfig.model = ASSISTANT_CONFIGURATION.model;
         // Update the filed ids
-        assistantConfig.file_ids = filteredFileIds;
+        assistantConfig.tool_resources.code_interpreter.file_ids = filteredFileIds;
         // The tools are provided in the basic config creation on row 15
 
 

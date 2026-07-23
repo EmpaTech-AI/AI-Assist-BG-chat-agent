@@ -7,7 +7,7 @@ import { CreateThreadDto } from './dto/create-thread.dto';
 import { SECONDS, USER_ROLES } from './interfaces/enums';
 const { schedule_appointment } = require('./tools/schedule-appointment');
 const { capture_lead } = require('./tools/capture-lead');
-const { fetch_properties_sofia } = require('./tools/fetch-properties-sofia');
+const { fetch_datetime } = require('./tools/fetch-datetime');
 
 require('dotenv').config();
 
@@ -21,7 +21,6 @@ export class AppService {
     this.openai = new OpenAI({
       apiKey: OPENAI_API_KEY,
     });
-
   };
 
   async start(): Promise<CreateThreadDto> {
@@ -39,6 +38,12 @@ export class AppService {
     const { thread_id, message } = data;
 
     try {
+
+      const activeRun = await this.getActiveRun(thread_id);
+      if (activeRun) {
+        return { response: "Нека да започнем с първия Ви въпрос, след което ще минем на следващия." };
+      }
+      
       // Pass in the user question into the existing thread
       await this.openai.beta.threads.messages.create(thread_id, {
         role: USER_ROLES.USER,
@@ -55,11 +60,11 @@ export class AppService {
 
       // Find the last message for the current run
       const lastMessageForRun = await this.getLatestMessageFromThread(thread_id, run.id);
-
       // @ts-ignore
       return { response: lastMessageForRun.content[0].text.value };
     } catch (e) {
       console.log(`Error while trying to chat with the assistant: ${e}`);
+      return { response: "Възникна проблем, моля опитайте пак." };
     }
   }
 
@@ -97,7 +102,7 @@ export class AppService {
         const SUPPORTED_ACTIONS = {
           'schedule_appointment': schedule_appointment,
           'capture_lead': capture_lead,
-          'fetch_properties_sofia': fetch_properties_sofia,
+          'fetch_datetime': fetch_datetime,
         };
 
         for (const toolCall of toolCalls) {
@@ -154,7 +159,7 @@ export class AppService {
    * @param run_id 
    * @returns 
    */
-  private async getLatestMessageFromThread(thread_id: string, run_id): Promise<OpenAI.Beta.Threads.Messages.ThreadMessage> {
+  private async getLatestMessageFromThread(thread_id: string, run_id): Promise<OpenAI.Beta.Threads.Messages.Message> {
     // Get the last assistant message from the messages array
     const messages = await this.openai.beta.threads.messages.list(thread_id);
 
@@ -164,8 +169,12 @@ export class AppService {
           message.run_id === run_id && message.role === USER_ROLES.ASSISTANT
       )
       .pop();
-
     return lastMessageForRun;
+  }
+
+  private async getActiveRun(thread_id: string): Promise<OpenAI.Beta.Threads.Runs.Run | null> {
+    const runs = await this.openai.beta.threads.runs.list(thread_id);
+    return runs.data.find(run => run.status === 'in_progress') || null;
   }
 }
 
