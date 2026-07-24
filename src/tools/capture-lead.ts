@@ -3,34 +3,33 @@
 
   const config = {
     "type": "function",
-    "function": {
-      "name": "capture_lead",
-      "description": "Collects and stores dentist patient lead information in Airtable.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Name of the lead."
-          },
-          "phone": {
-            "type": "string",
-            "description": "Phone number of the lead.",
-          },
-          "email": {
-            "type": "string",
-            "description": "Email address of the lead.",
-            "format": "email"
-          },
-          "query": {
-            "type": "string",
-            "description":
-              "Optional - Any additional info about the client or the procedure."
-          },
+    "name": "capture_lead",
+    "description": "Collects and stores dentist patient lead information in Airtable.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the lead."
         },
-        "required": ["name", "phone", "email", "query"]
-      }
-    }
+        "phone": {
+          "type": "string",
+          "description": "Phone number of the lead.",
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the lead.",
+          "format": "email"
+        },
+        "query": {
+          "type": "string",
+          "description":
+            "Optional - Any additional info about the client or the procedure."
+        },
+      },
+      "required": ["name", "phone", "email", "query"]
+    },
+    "strict": false
   }
 
   function validateEmail(email) {

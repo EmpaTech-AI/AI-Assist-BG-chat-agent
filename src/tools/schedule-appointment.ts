@@ -2,34 +2,33 @@
   const axios = require('axios')
   const config = {
     "type": "function",
-    "function": {
-      "name": "schedule_appointment",
-      "description": "Schedule an appointment",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "full_name": {
-            "type": "string",
-            "description": "Full name of the user."
-          },
-          "email": {
-            "type": "string",
-            "description": "Email address of the user."
-          },
-          "question": {
-            "type": "string",
-            "description": "Appointment question of the user"
-          },
-          "date_time": {
-            "type":
-              "string",
-            "description":
-              "Preferred date and time for visit (YYYY-MM-DD HH:MM)."
-          }
+    "name": "schedule_appointment",
+    "description": "Schedule an appointment",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "full_name": {
+          "type": "string",
+          "description": "Full name of the user."
         },
-        "required": ["full_name", "email", "question", "date_time"]
-      }
-    }
+        "email": {
+          "type": "string",
+          "description": "Email address of the user."
+        },
+        "question": {
+          "type": "string",
+          "description": "Appointment question of the user"
+        },
+        "date_time": {
+          "type":
+            "string",
+          "description":
+            "Preferred date and time for visit (YYYY-MM-DD HH:MM)."
+        }
+      },
+      "required": ["full_name", "email", "question", "date_time"]
+    },
+    "strict": false
   }
 
   /**

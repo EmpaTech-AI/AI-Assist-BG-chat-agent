@@ -3,15 +3,14 @@
 
   const config = {
     "type": "function",
-    "function": {
-      "name": "fetch_datetime",
-      "description": "Fetches the current date and time from a public API or system clock.",
-      "parameters": {
-        "type": "object",
-        "properties": {},
-        "required": []
-      }
-    }
+    "name": "fetch_datetime",
+    "description": "Fetches the current date and time from a public API or system clock.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "strict": false
   }
 
   // Fetch the current date and time
